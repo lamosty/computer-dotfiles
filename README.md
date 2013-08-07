@@ -1,3 +1,8 @@
-My dotfiles. 
+# My dotfiles.
 
-Vim is using Vundle Package Manager, so you need to install that first.
+### Vim
+- using vundle plugin manager (not included in dotfiles but plugins and config
+  included in .vimrc)
+- forked from [kremso dotfiles](https://github.com/kremso/dotfiles)
+
+
