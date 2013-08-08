@@ -33,6 +33,7 @@ Bundle 'tpope/vim-surround'
 Bundle 'mattn/emmet-vim'
 Bundle 'vim-ruby/vim-ruby'
 Bundle 'tomtom/tcomment_vim'
+Bundle 'tpope/vim-haml'
 
 filetype plugin indent on
 " Basics {{{
@@ -345,7 +346,7 @@ f(yi(
     augroup FTHtml
       au!
       "au BufRead,BufNewFile *.html.erb set ft=html.erb
-      autocmd FileType html,xhtml,wml,cf,mako      setlocal ai et sta sw=2 sts=2
+      autocmd FileType html,xhtml,wml,cf,mako,haml      setlocal ai et sta sw=2 sts=2
       autocmd FileType xml,xsd,xslt           setlocal ai et sta sw=2 sts=2 ts=2
       autocmd FileType html setlocal iskeyword+=~
       autocmd FileType xml exe ":silent 1,$!xmllint --format --recover - 2>/dev/null"
@@ -470,14 +471,16 @@ f(yi(
   "" }}}
   " CoffeeScript {{{
     au BufWritePost *.coffee silent CoffeeMake! | redraw!
-    au BufNewFile,BufReadPost *.coffee setl foldmethod=indent nofoldenable
-    au BufNewFile,BufReadPost *.coffee setl shiftwidth=2 expandtab
+    au FileType coffee setl sw=2 sts=2 et
+    " au BufNewFile,BufReadPost *.coffee setl foldmethod=indent nofoldenable
+    " au BufNewFile,BufReadPost *.coffee setl shiftwidth=2 expandtab
 
   " }}}
   " tComment {{{
 
   " Comment javascript code
   map <leader>cj <C-_>a javascript<CR>
+  map <leader>cc <C-_>a coffee<CR>
   " }}}
 " }}}
 
