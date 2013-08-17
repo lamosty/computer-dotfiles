@@ -34,6 +34,8 @@ Bundle 'mattn/emmet-vim'
 Bundle 'vim-ruby/vim-ruby'
 Bundle 'tomtom/tcomment_vim'
 Bundle 'tpope/vim-haml'
+Bundle 'kshenoy/vim-signature'
+Bundle 'Yggdroot/indentLine'
 
 filetype plugin indent on
 " Basics {{{
@@ -481,6 +483,12 @@ f(yi(
   " Comment javascript code
   map <leader>cj <C-_>a javascript<CR>
   map <leader>cc <C-_>a coffee<CR>
+  " }}}
+  " HTML {{{
+    au BufWritePost *.html retab!
+  " }}}
+  " Dart {{{
+    " au BufWritePost,FileWritePost *.dart silent !dart2js -o <afile>:r.js <afile>
   " }}}
 " }}}
 
