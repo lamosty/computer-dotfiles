@@ -1,17 +1,19 @@
-set nocompatible
-filetype off
+set nocompatible              " be iMproved, required
+filetype off                  " required
 
-set rtp+=~/.vim/bundle/vundle/
-call vundle#rc()
+" set the runtime path to include Vundle and initialize
+set rtp+=~/.vim/bundle/Vundle.vim
+call vundle#begin()
+" alternatively, pass a path where Vundle should install plugins
+"call vundle#begin('~/some/path/here')
 
-Bundle 'gmarik/vundle'
-Bundle 'mileszs/ack.vim'
+" let Vundle manage Vundle, required
+Plugin 'VundleVim/Vundle.vim'
+Plugin 'mileszs/ack.vim'
 Bundle 'othree/html5.vim'
-Bundle 'ervandew/supertab'
 Bundle 'sjl/splice.vim'
 Bundle 'plasticboy/vim-markdown'
 Bundle 'kien/ctrlp.vim'
-Bundle 'davidhalter/jedi-vim'
 Bundle 'scrooloose/syntastic'
 Bundle 'sophacles/vim-bundle-mako'
 Bundle 'tpope/vim-fugitive'
@@ -35,7 +37,16 @@ Bundle 'vim-ruby/vim-ruby'
 Bundle 'tomtom/tcomment_vim'
 Bundle 'tpope/vim-haml'
 Bundle 'kshenoy/vim-signature'
-Bundle 'Yggdroot/indentLine'
+Bundle 'othree/javascript-libraries-syntax.vim'
+Bundle 'SirVer/ultisnips'
+Bundle 'ervandew/sgmlendtag'
+Bundle 'Valloric/YouCompleteMe'
+Bundle 'rking/ag.vim'
+Bundle 'vim-scripts/VimRepress'
+Bundle 'StanAngeloff/php.vim'
+" Bundle 'Yggdroot/indentLine'
+
+call vundle#end()
 
 filetype plugin indent on
 " Basics {{{
@@ -50,7 +61,7 @@ filetype plugin indent on
     set backupdir=~/.vim/tmp/backup " where to put backup files
     set directory=~/.vim/tmp/swap " directory to place swap files in
     set undodir=~/.vim/tmp/undo " directory to place undo files in
-    set clipboard+=unnamed,unnamedplus,autoselect " share clipboard
+    set clipboard=unnamedplus " share clipboard
     set hidden " you can change buffers without saving
     set mouse=a " use mouse everywhere
     set noerrorbells " don't make noise
@@ -97,7 +108,8 @@ filetype plugin indent on
     set listchars=tab:▸\ ,trail:¬,extends:❯,precedes:❮,nbsp:~
     set nostartofline " don't move the cursor to first non-blank character after some commands (:25 e.g.)
     set novisualbell " don't blink
-    set relativenumber " turn on line numbers
+    " set relativenumber " turn on line numbers
+    set nu
     set report=0 " tell us when anything is changed
     set ruler " Always show current positions along the bottom
     set shortmess=atToOI " shortens messages to avoid 'press a key' prompt
@@ -112,8 +124,8 @@ filetype plugin indent on
 
 " Text Formatting/Layout {{{
     set expandtab " no real tabs please!
-    set wrap "wrap text
-    set textwidth=79 " to 79 characters
+    " set wrap "wrap text
+    " set textwidth=79 " to 79 characters
     "set colorcolumn=85 " and warn me if my line gets over 85 characters
     set formatoptions=cqt " see :help fo-table
     set infercase " case inferred by default
@@ -199,6 +211,8 @@ filetype plugin indent on
     noremap <c-u> <c-u>zz
     noremap <c-d> <c-d>zz
 
+    " paste in pasting code, unpaste afterwards
+
     " Cucumber table aligning {{{
     inoremap <silent> <Bar>   <Bar><Esc>:call <SID>align()<CR>a
 
@@ -255,8 +269,8 @@ filetype plugin indent on
         endif
     endfunction
     " }}}
-    
-    vnoremap <C-c> "+y
+
+    " nnoremap <C-c> "+y
 
     let delimitMate_expand_cr=1
 
@@ -289,6 +303,10 @@ nnoremap <leader>a :Ack
 
   " reformat whole file
   nnoremap <leader>= ggVG=
+
+  " set/unset paste
+  nnoremap <leader>p :set paste<cr>
+  nnoremap <leader>p! :set paste!<cr>
 
   " convert {} to do/end
   nnoremap <leader>b ^f{cwdo<cr><esc>$xxoend<esc>
@@ -351,10 +369,11 @@ f(yi(
       autocmd FileType html,xhtml,wml,cf,mako,haml      setlocal ai et sta sw=2 sts=2
       autocmd FileType xml,xsd,xslt           setlocal ai et sta sw=2 sts=2 ts=2
       autocmd FileType html setlocal iskeyword+=~
-      autocmd FileType xml exe ":silent 1,$!xmllint --format --recover - 2>/dev/null"
     augroup END
   " }}}
   " JavaScript {{{
+  autocmd FileType javascript
+    \ :setl omnifunc=jscomplete#CompleteJS
     augroup FTJavascript
       au!
       autocmd FileType javascript setlocal ai et sta sw=2 sts=2 ts=2 cin isk+=$
@@ -396,7 +415,7 @@ f(yi(
   " Plain text {{{
     augroup FTText
       au!
-      autocmd FileType text,txt,mail          setlocal ai com=fb:*,fb:-,n:>
+      autocmd FileType text,txt,mail      setlocal ai com=fb:*,fb:-,n:>
       autocmd FileType text,txt setlocal tw=78 linebreak nolist
     augroup END
   " }}}
@@ -472,7 +491,7 @@ f(yi(
   "map <leader>a :call RunTests('spec')<cr>
   "" }}}
   " CoffeeScript {{{
-    au BufWritePost *.coffee silent CoffeeMake! | redraw!
+    " au BufWritePost *.coffee silent CoffeeMake! | redraw!
     au FileType coffee setl sw=2 sts=2 et
     " au BufNewFile,BufReadPost *.coffee setl foldmethod=indent nofoldenable
     " au BufNewFile,BufReadPost *.coffee setl shiftwidth=2 expandtab
@@ -488,7 +507,18 @@ f(yi(
     au BufWritePost *.html retab!
   " }}}
   " Dart {{{
-    " au BufWritePost,FileWritePost *.dart silent !dart2js -o <afile>:r.js <afile>
+    " au BufNewFile,BufReadPost *.dart setl shiftwidth=2 expandtab
+  " }}}
+  " HAML {{{
+    au BufRead,BufNewFile *.hamlc set ft=haml
+  " }}}
+  " Markdown {{{
+    augroup MKD
+        au!
+        autocmd FileType mkd setlocal formatoptions=n wrap linebreak nolist spell spelllang=en_us
+        autocmd FileType mkd setlocal textwidth=0
+        autocmd FileType mkd setlocal wrapmargin=0
+    augroup END
   " }}}
 " }}}
 
@@ -532,11 +562,11 @@ f(yi(
     " }}}
 
     " syntastic {{{
-    let g:syntastic_auto_loc_list=1
+    let g:syntastic_auto_loc_list=2
     let g:syntastic_enable_signs=1
     let g:synastic_quiet_warnings=1
     let g:syntastic_python_checkers=['flake8']
-    let g:syntastic_html_checkers=['tidy', 'validator', 'w3']
+    " let g:syntastic_html_checkers=['tidy']
     " }}}
 
     " YankRing {{{
@@ -576,6 +606,12 @@ f(yi(
     map <leader>gv :CtrlP app/views<cr>
     map <leader>gc :CtrlP app/controllers<cr>
     map <leader>gm :CtrlP app/models<cr>
+    " }}}
+
+    " AngularJS {{{
+    " }}}
+    " UltiSnip {{{
+    let g:UltiSnipsExpandTrigger="<c-j>"
     " }}}
 " }}}
 

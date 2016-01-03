@@ -5,6 +5,8 @@
         export HISTFILE=~/.zshhist
         export HISTSIZE=10000
         export SAVEHIST=$HISTSIZE
+        export CLICOLOR=1
+        export LSCOLORS=GxFxCxDxBxegedabagaced
     # }}}
     # Colors {{{
         export GREP_COLORS="38;5;230:sl=38;5;240:cs=38;5;100:mt=38;5;161:fn=38;5;197:ln=38;5;212:bn=38;5;44:se=38;5;166"
@@ -25,12 +27,6 @@
         export LC_MEASUREMENT="sk_SK.utf8"
         export LC_IDENTIFICATION="sk_SK.utf8"
         export LC_ALL=""
-    # }}}
-    # Build settings {{{
-        export CFLAGS="-march=native -mtune=native -O3 -pipe"
-        export CXXFLAGS="$CFLAGS"
-        export LDFLAGS="-Wl,--hash-style=gnu -Wl,--as-needed"
-        export MAKEFLAGS="-j6"
     # }}}
     # Applications {{{
         export LESS_VIM="vim -R \
@@ -105,23 +101,15 @@
         alias _="sudo"
         alias -- +="sudo"
         alias sv="+ vim"
-        alias ls="ls --color=auto"
-        alias lsa="ls -AahXBFov --color=auto --indicator-style=file-type --group-directories-first"
+        alias ls='ls -Fh --color'
         alias ss="+ -s"
-        alias grep="grep --color=auto"
         alias sd="+ shutdown -h now"
         alias rb="+ reboot"
-        alias p="+ pacman"
-        alias sy="p -Syu"
-        alias df="df -h"
-        alias du="du -h"
-        alias rmr="rm -rf"
         alias mv="nocorrect mv -iv"
         alias cp="nocorrect cp -iv"
         alias mkdir="nocorrect mkdir -vp"
         alias chmod="chmod -v"
         alias chown="chown -v"
-        alias open="xdg-open"
         alias dv="dirs -v"
     # }}}
     # Default sudo commands {{{
@@ -134,6 +122,7 @@
         alias -s {php,tpl,txt,PKGBUILD}=$EDITOR
         alias -s {jpg,JPG,jpeg,JPEG,png,PNG,gif,GIF}="feh -FZd"
         alias -s {mpg,mpeg,avi,ogm,wmv,m4v,mp4,mov}="mplayer -idx"
+        alias -s {pdf}="open"
     # }}}
     # Git aliases {{{
         alias g="git"
@@ -262,7 +251,7 @@
       # A few utility functions to make it easy and re-usable to draw segmented prompts
 
       CURRENT_BG='NONE'
-      SEGMENT_SEPARATOR='⮀'
+      SEGMENT_SEPARATOR=''
 
       # Begin a segment
       # Takes two arguments, background and foreground. Both can be omitted,
@@ -315,7 +304,7 @@
           else
             prompt_segment green black
           fi
-          echo -n "${ref/refs\/heads\//⭠ }$dirty"
+          echo -n "${ref/refs\/heads\//}$dirty"
         fi
       }
 
@@ -396,36 +385,14 @@
         bindkey "^F" integrated-ranger
     # }}}
 # }}}
-# Functions {{{
-    # Service control {{{
-        service(){
-            for s in ${*[2,-1]}; do
-                if [[ -n $1 ]]; then
-                    [[ ! -r /etc/rc.d/$s ]] && echo "Cannot control service '$s'" && continue
-                    sudo /etc/rc.d/$s $1
-                else
-                    /etc/rc.d/$s
-                fi
-            done
-        }
-        start()  { service start $*   }
-        stop()   { service stop $*    }
-        restart(){ service restart $* }
-    # }}}
-    # View matching file {{{
-        vmf() {
-          if [[ $# -lt 2 ]]; then
-            ls **/*$1* -l | awk '{ print $9 }' 
-          else
-            less `ls **/*$1* -l | awk '{ print $9 }' | head -$2 | tail -1`
-          fi
-        }
-    # }}}
-# }}}
 
-PATH=$PATH:$HOME/.rvm/bin # Add RVM to PATH for scripting
-if [[ -s $HOME/.rvm/scripts/rvm ]] ; then source $HOME/.rvm/scripts/rvm ; fi
+## cd, because typing the backslash is A LOT of work!!
+#### not needed due to ZSH autocd opt
+alias ,='ls'
+alias ,,='ls -al'
+alias .='cd ../; ls'
+alias ..='cd ../../; ls'
+alias ...='cd ../../../; ls'
+alias ....='cd ../../../../; ls'
 
-if [[ -r ~/.local/lib/python2.7/site-packages/powerline/bindings/zsh/powerline.zsh ]]; then
- source ~/.local/lib/python2.7/site-packages/powerline/bindings/zsh/powerline.zsh
-fi
+export PATH="$PATH:$HOME/.npm-packages/bin:$HOME/.local/bin"
